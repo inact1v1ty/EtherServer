@@ -32,7 +32,14 @@ namespace EtherServer.Networking
 
         public void BeginTcpReceive()
         {
-            tcpClient.Client.BeginReceive(rbuffer, 0, rbuffer.Length, SocketFlags.None, OnReceivedReliable, null);
+            try {
+                tcpClient.Client.BeginReceive(rbuffer, 0, rbuffer.Length, SocketFlags.None, OnReceivedReliable, null);
+            }
+            catch (SocketException ex)
+            {
+                Close();
+                NetServer.Instance.ClientDisconnected(this.RemoteEndPoint);
+            }
         }
 
         private void OnReceivedReliable(IAsyncResult ar)
@@ -48,6 +55,11 @@ namespace EtherServer.Networking
 
                 tcpClient.Client.BeginReceive(rbuffer, 0, rbuffer.Length, SocketFlags.None, OnReceivedReliable, null);
             }
+            catch (SocketException ex)
+            {
+                Close();
+                NetServer.Instance.ClientDisconnected(this.RemoteEndPoint);
+            }
             catch (System.Exception)
             {
                 Close();
@@ -61,7 +73,15 @@ namespace EtherServer.Networking
 
         public void SendReliable(byte[] buffer)
         {
-            tcpClient.Client.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, OnSendReliable, null);
+            try
+            {
+                tcpClient.Client.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, OnSendReliable, null);
+            }
+            catch (SocketException ex)
+            {
+                Close();
+                NetServer.Instance.ClientDisconnected(this.RemoteEndPoint);
+            }
         }
 
         private void OnSendReliable(IAsyncResult ar)
