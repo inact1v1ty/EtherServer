@@ -82,11 +82,11 @@ namespace EtherServer.Networking
             {
                 TcpClient client = await listener.AcceptTcpClientAsync().ConfigureAwait(false);
 
-                AddClient(client, ct);
+                await AddClient(client, ct);
             }
         }
 
-        void AddClient(TcpClient tcpClient, CancellationToken ct)
+        async Task AddClient(TcpClient tcpClient, CancellationToken ct)
         {
             if (tcpClient.Client.Poll(0, SelectMode.SelectRead))
             {
@@ -103,7 +103,7 @@ namespace EtherServer.Networking
                 client,
                 (ip, cl) => { return client; });
 
-            World.Instance.AddPlayer(client);
+            await World.Instance.AddPlayer(client);
         }
 
         void OnUdpReceive(IAsyncResult ar)
