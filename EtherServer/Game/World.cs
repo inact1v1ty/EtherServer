@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Text;
+<<<<<<< HEAD
+=======
 using System.Threading;
+>>>>>>> f8f03b94ef42117eca5ab373dad7d31342eaa021
 using System.Threading.Tasks;
 using EtherServer.Networking;
 
@@ -69,7 +72,7 @@ namespace EtherServer.Game
             }
         }
 
-        public void AddPlayer(NetClient client)
+        public async Task AddPlayer(NetClient client)
         {
             var player = new Player
             {
@@ -78,7 +81,7 @@ namespace EtherServer.Game
             };
             usedIds.Add(player.id);
             players.Add(player.id, player);
-            player.Init();
+            await player.Init();
 
             foreach (var p in players)
             {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EtherServer.Game
 {
-    class Player
+    public class Player
     {
         public int id;
 
@@ -17,11 +17,19 @@ namespace EtherServer.Game
 
         public Vector3 position;
 
-        public void Init()
+        public Inventory inventory;
+
+        public Player(){
+            inventory = new Inventory();
+        }
+
+        public async Task Init()
         {
             client.OnReliableReceived += OnReceived;
             client.OnUnReliableReceived += OnReceived;
             client.BeginTcpReceive();
+            int artifacts = await this.inventory.getInventory(this);
+            Console.WriteLine(artifacts);
         }
 
         private void OnReceived(byte[] buffer, int length)
