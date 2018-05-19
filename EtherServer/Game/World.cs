@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Net;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using EtherServer.Networking;
 
 namespace EtherServer.Game
@@ -12,6 +16,8 @@ namespace EtherServer.Game
         private World() {
             players = new Dictionary<int, Player>();
             usedIds = new HashSet<int>();
+            cts = new CancellationTokenSource();
+            stopwatch = new Stopwatch();
         }
 
         public static World Instance
@@ -26,7 +32,32 @@ namespace EtherServer.Game
 
         Dictionary<int, Player> players;
 
+        CancellationTokenSource cts;
+
+        Stopwatch stopwatch;
+
         public void Init()
+        {
+            
+        }
+
+        public void Run()
+        {
+            var ct = cts.Token;
+
+            while (!ct.IsCancellationRequested)
+            {
+                stopwatch.Restart();
+                Update();
+                stopwatch.Stop();
+                var delay = TimeSpan.FromMilliseconds(20) - stopwatch.Elapsed;
+                if (delay.Ticks > 0) {
+                    Thread.Sleep(delay);
+                }
+            }
+        }
+
+        void Update()
         {
 
         }
@@ -84,6 +115,27 @@ namespace EtherServer.Game
                 if (p.Key != id)
                 {
                     p.Value.UpdatePosition(id, position);
+                }
+            }
+        }
+
+        public void ClientDisconnected(IPEndPoint endPoint)
+        {
+            int id = -1;
+            foreach (var p in players)
+            {
+                if (p.Value.client.RemoteEndPoint == endPoint)
+                {
+                    id = p.Value.id;
+                }
+            }
+            if (id != -1) {
+                foreach (var p in players)
+                {
+                    if (p.Key != id)
+                    {
+                        p.Value.PlayerDisconnected(id);
+                    }
                 }
             }
         }

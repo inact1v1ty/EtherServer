@@ -106,24 +106,43 @@ namespace EtherServer.Networking
             World.Instance.AddPlayer(client);
         }
 
+        public void ClientDisconnected(IPEndPoint endPoint)
+        {
+            World.Instance.ClientDisconnected(endPoint);
+            if(clients.TryRemove(endPoint, out NetClient client)){ }
+        }
+
         void OnUdpReceive(IAsyncResult ar)
         {
             IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, port);
+
             byte[] data = udpClient.EndReceive(ar, ref endPoint);
 
-            NetClient client;
-
-            if(clients.TryGetValue(endPoint, out client))
+            if (clients.TryGetValue(endPoint, out NetClient client))
             {
                 client.ReceivedUdp(data);
             }
 
-            udpClient.BeginReceive(OnUdpReceive, null);
+            try
+            {
+                udpClient.BeginReceive(OnUdpReceive, null);
+            }
+            catch (SocketException ex)
+            {
+                ClientDisconnected(endPoint);
+            }
         }
 
         public void SendUnReliable(IPEndPoint endPoint, byte[] buffer)
         {
-            udpClient.BeginSend(buffer, buffer.Length, endPoint, OnUdpSend, null);
+            try
+            {
+                udpClient.BeginSend(buffer, buffer.Length, endPoint, OnUdpSend, null);
+            }
+            catch (SocketException ex)
+            {
+                ClientDisconnected(endPoint);
+            }
         }
 
         void OnUdpSend(IAsyncResult ar)
