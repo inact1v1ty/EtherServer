@@ -13,13 +13,6 @@ namespace EtherServer.Game
     {
         private static readonly World instance = new World();
 
-        private World() {
-            players = new Dictionary<int, Player>();
-            usedIds = new HashSet<int>();
-            cts = new CancellationTokenSource();
-            stopwatch = new Stopwatch();
-        }
-
         public static World Instance
         {
             get
@@ -36,6 +29,17 @@ namespace EtherServer.Game
 
         Stopwatch stopwatch;
 
+        List<Entity> entities;
+
+        private World()
+        {
+            players = new Dictionary<int, Player>();
+            usedIds = new HashSet<int>();
+            cts = new CancellationTokenSource();
+            stopwatch = new Stopwatch();
+            entities = new List<Entity>();
+        }
+
         public void Init()
         {
             
@@ -50,7 +54,7 @@ namespace EtherServer.Game
                 stopwatch.Restart();
                 Update();
                 stopwatch.Stop();
-                var delay = TimeSpan.FromMilliseconds(20) - stopwatch.Elapsed;
+                var delay = TimeSpan.FromMilliseconds(2000) - stopwatch.Elapsed;
                 if (delay.Ticks > 0) {
                     Thread.Sleep(delay);
                 }
@@ -59,7 +63,10 @@ namespace EtherServer.Game
 
         void Update()
         {
-
+            foreach(var e in entities)
+            {
+                e.Update();
+            }
         }
 
         public void AddPlayer(NetClient client)
@@ -137,6 +144,8 @@ namespace EtherServer.Game
                         p.Value.PlayerDisconnected(id);
                     }
                 }
+                players.Remove(id);
+                Console.WriteLine("Player from {0} disconnected", endPoint);
             }
         }
 

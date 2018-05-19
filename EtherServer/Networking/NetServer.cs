@@ -149,5 +149,14 @@ namespace EtherServer.Networking
         {
             udpClient.EndSend(ar);
         }
+
+        public void OnProcessExit()
+        {
+            udpClient.Close();
+            foreach (var c in clients)
+            {
+                c.Value.Close();
+            }
+        }
     }
 }

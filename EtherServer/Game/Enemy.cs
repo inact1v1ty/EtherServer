@@ -4,11 +4,11 @@ using System.Text;
 
 namespace EtherServer.Game
 {
-    class Entity
+    class Enemy : Entity
     {
-        public virtual void Update()
+        public override void Update()
         {
-            Console.WriteLine("Entity");
+            
         }
     }
 }

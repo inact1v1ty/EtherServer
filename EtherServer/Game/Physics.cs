@@ -19,7 +19,5 @@ namespace EtherServer.Game
                 return instance;
             }
         }
-
-
     }
 }
