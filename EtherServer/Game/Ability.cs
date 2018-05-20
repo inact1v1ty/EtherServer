@@ -18,7 +18,7 @@ namespace EtherServer.Game
         }
         static Dictionary<int, IAbility> abilities = new Dictionary<int, IAbility>()
         {
-            {0, new Abilities.StrongSwordAttack() }
+            {1, new Abilities.StrongSwordAttack() }
         };
     }
 }

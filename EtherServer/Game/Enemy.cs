@@ -67,6 +67,9 @@ namespace EtherServer.Game
         }
 
         protected virtual void GiveLoot(ref List<Artifact> artifacts) { }
-        protected virtual void OnDeath() { }
+        protected virtual void OnDeath()
+        {
+            World.Instance.EnemyDied(this.id);
+        }
     }
 }

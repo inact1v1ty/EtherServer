@@ -60,10 +60,6 @@ namespace EtherServer.Networking
                 Close();
                 NetServer.Instance.ClientDisconnected(this.RemoteEndPoint);
             }
-            catch (System.Exception)
-            {
-                Close();
-            }
         }
 
         internal void ReceivedUdp(byte[] buffer)

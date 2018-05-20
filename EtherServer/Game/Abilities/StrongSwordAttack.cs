@@ -16,7 +16,7 @@ namespace EtherServer.Game.Abilities
         public void Use(int playerId, Vector3 target)
         {
             var position = World.Instance.players[playerId].position;
-            var direction = (position - (SVector3)target).Normalized();
+            var direction = ((SVector3)target - position).Normalized();
             foreach (var e in World.Instance.entities)
             {
                 if(e.Value is Enemy)
@@ -25,6 +25,8 @@ namespace EtherServer.Game.Abilities
                     if (Hit(position, direction, enemy.Agent.Position))
                     {
                         enemy.Hit(60, this.Type(), playerId);
+                        if (enemy.hp <= 0)
+                            break;
                     }
                 }
             }
@@ -32,12 +34,12 @@ namespace EtherServer.Game.Abilities
 
         bool Hit(SVector3 position, SVector3 direction, SVector3 enemyPosition)
         {
-            if ((enemyPosition - position).Length() <= 2f)
+            if ((enemyPosition - position).Length() <= 3f)
             {
                 var enDirection = (enemyPosition - position).Normalized();
                 var dot = SVector3.Dot(direction, enDirection);
 
-                if (dot > Math.Sin(180 * 60 / Math.PI))
+                if (dot >= Math.Sin(180 * 60 / Math.PI))
                 {
                     return true;
                 }
