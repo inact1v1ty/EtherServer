@@ -13,7 +13,7 @@ namespace EtherServer.Game
 
         public async Task<int> getInventory(Player player){
             Console.WriteLine("started blockchain connection");
-            string playerAddress = "0x6b2fb2df3ae3b22b8a4842461231d7b0e556ffd3"; // player.address
+            string playerAddress = player.address;
             string contractAddress = "0xaafa19d6f354eee368e0bc6ed0a418cc8bf49763";
             string abi = ABI.artifactsAbi;
             // server account
@@ -34,7 +34,7 @@ namespace EtherServer.Game
                     artifacts.Add(new Artifact(typeId, i, true));
                 }
             }
-
+            Console.WriteLine("inventory loaded");
             return amount;
         }
     }
