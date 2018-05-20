@@ -40,7 +40,7 @@ namespace EtherServer.Game.Enemies
             
             if (targetPlayer != -1)
             {
-                if (SVector3.Subtract(Agent.Position, World.Instance.players[targetPlayer].position).Length() < 1.5f)
+                if (SVector3.Subtract(Agent.Position, World.Instance.players[targetPlayer].position).Length() < 3f)
                 {
                     SetTargetPosition(Agent.Position);
                 }

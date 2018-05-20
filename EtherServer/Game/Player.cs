@@ -39,7 +39,7 @@ namespace EtherServer.Game
             client.OnReliableReceived += OnReceived;
             client.OnUnReliableReceived += OnReceived;
             client.BeginTcpReceive();
-            int artifacts = await this.inventory.getInventory(this);
+            //int artifacts = await this.inventory.getInventory(this);
         }
 
         private void OnReceived(byte[] buffer, int length)
