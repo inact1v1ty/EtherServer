@@ -22,6 +22,8 @@ namespace EtherServer.Game
 
         public Inventory inventory;
 
+        public string address;
+
         public Player(){
             inventory = new Inventory();
         }
@@ -38,7 +40,6 @@ namespace EtherServer.Game
             client.OnUnReliableReceived += OnReceived;
             client.BeginTcpReceive();
             int artifacts = await this.inventory.getInventory(this);
-            Console.WriteLine(artifacts);
         }
 
         private void OnReceived(byte[] buffer, int length)
@@ -56,6 +57,10 @@ namespace EtherServer.Game
                             var bytes = br.ReadBytes(count);
                             Name = Encoding.UTF8.GetString(bytes);
                             World.Instance.UpdateNickname(this.id, Name);
+
+                            count = br.ReadInt32();
+                            bytes = br.ReadBytes(count);
+                            this.address = Encoding.UTF8.GetString(bytes);
                         }
                         break;
                     case NetMessage.GetPlayers:
