@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Text;
-<<<<<<< HEAD
-=======
 using System.Threading;
->>>>>>> f8f03b94ef42117eca5ab373dad7d31342eaa021
 using System.Threading.Tasks;
 using EtherServer.Networking;
 
@@ -45,7 +42,7 @@ namespace EtherServer.Game
 
         public void Init()
         {
-            
+
         }
 
         public void Run()

@@ -12,9 +12,10 @@ namespace EtherServer.Game
 
         public Dictionary<string, int> effects;
 
-        public Artifact(int typeId, int uniqueId){
+        public Artifact(int typeId, int uniqueId, bool isReal){
             this.typeId = typeId;
             this.uniqueId = uniqueId;
+            this.isReal = isReal;
             this.effects = new Dictionary<string, int>();
         }
     }
