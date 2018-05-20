@@ -54,9 +54,6 @@ namespace EtherServer.Game
 
         public void Init()
         {
-<<<<<<< HEAD
-
-=======
             var boss = new Enemies.TestBoss();
             Task.Run(() =>
             {
@@ -64,7 +61,6 @@ namespace EtherServer.Game
                 Console.WriteLine("Boss incoming");
                 AddEntity(boss);
             });
->>>>>>> 9d664233983519bf358f39c63f7a78b0930e7c04
         }
 
         public void Run()
