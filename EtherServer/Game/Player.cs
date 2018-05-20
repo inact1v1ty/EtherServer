@@ -1,4 +1,5 @@
 ﻿using EtherServer.Networking;
+using SharpNav.Crowds;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,6 +14,8 @@ namespace EtherServer.Game
 
         public string Name { get; set; }
 
+        public int agentID;
+
         public NetClient client;
 
         public Vector3 position;
@@ -25,6 +28,12 @@ namespace EtherServer.Game
 
         public async Task Init()
         {
+            var agentParams = new AgentParams();
+            agentParams.Height = 1.75f;
+            agentParams.Radius = 0.4f;
+            agentParams.UpdateFlags = (UpdateFlags)(0);
+            agentParams.MaxSpeed = 0;
+            agentID = World.Instance.crowd.AddAgent(new SharpNav.Geometry.Vector3(3.02f, -4.72f, 65.34f), agentParams);
             client.OnReliableReceived += OnReceived;
             client.OnUnReliableReceived += OnReceived;
             client.BeginTcpReceive();
@@ -73,7 +82,26 @@ namespace EtherServer.Game
                         {
                             var position = br.ReadVector3();
                             this.position = position;
+                            World.Instance.crowd.GetAgent(agentID).Position = position;
                             World.Instance.UpdatePosition(this.id, position);
+                        }
+                        break;
+                    case NetMessage.GetEnemies:
+                        {
+                            var enemies = World.Instance.GetEnemies();
+                            using (MemoryStream ms2 = new MemoryStream())
+                            using (BinaryWriter bw = new BinaryWriter(ms2))
+                            {
+                                bw.Write((int)(NetMessage.GetEnemies));
+                                bw.Write(enemies.Count);
+                                for (int i = 0; i < enemies.Count; i++)
+                                {
+                                    bw.Write(enemies[i].id);
+                                    bw.Write(enemies[i].gameID);
+                                    bw.Write(enemies[i].position);
+                                }
+                                client.SendReliable(ms2.ToArray());
+                            }
                         }
                         break;
                 }
@@ -128,14 +156,15 @@ namespace EtherServer.Game
             }
         }
 
-        public void SpawnEnemy(int id)
+        public void SpawnEnemy(int id, int gameID)
         {
             using (MemoryStream ms = new MemoryStream())
             using (BinaryWriter bw = new BinaryWriter(ms))
             {
                 bw.Write((int)(NetMessage.SpawnEnemy));
                 bw.Write(id);
-                client.SendUnReliable(ms.ToArray());
+                bw.Write(gameID);
+                client.SendReliable(ms.ToArray());
             }
         }
 

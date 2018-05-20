@@ -10,26 +10,26 @@ namespace EtherServer.Game
     {
         public static NavMesh GetNavMesh()
         {
-            var startPoint = new SharpNav.Geometry.Vector3(3f, -4.72f, 65.35f);
+            var startPoint = new SharpNav.Geometry.Vector3(0f, -4.72f, 0f);
             //prepare the geometry from your mesh data
             var tris = TriangleEnumerable.FromIndexedVector3(
                 new SharpNav.Geometry.Vector3[]
                 {
-                    new SharpNav.Geometry.Vector3(-10, 0, -10) + startPoint,
-                    new SharpNav.Geometry.Vector3(-10, 0, 10) + startPoint,
-                    new SharpNav.Geometry.Vector3(10, 0, 10) + startPoint,
-                    new SharpNav.Geometry.Vector3(10, 0, -10) + startPoint
+                    new SharpNav.Geometry.Vector3(-100, 0, -100) + startPoint,
+                    new SharpNav.Geometry.Vector3(0, 0, 200) + startPoint,
+                    new SharpNav.Geometry.Vector3(100, 0, -100) + startPoint,
+                    //new SharpNav.Geometry.Vector3(10, 0, -10) + startPoint
                 },
                 new int[]
                 {
                     0,
                     1,
                     2,
-                    0,
-                    2,
-                    3
+                    //0,
+                    //2,
+                    //3
                 },
-                0, 1, 0, 2);
+                0, 1, 0, 1);
 
             //use the default generation settings
             var settings = NavMeshGenerationSettings.Default;

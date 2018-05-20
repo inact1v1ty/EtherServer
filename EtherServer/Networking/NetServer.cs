@@ -125,14 +125,11 @@ namespace EtherServer.Networking
                     client.ReceivedUdp(data);
                 }
                 
-                try
-                {
-                    udpClient.BeginReceive(OnUdpReceive, null);
-                }
-                catch (SocketException ex)
-                {
-                    ClientDisconnected(endPoint);
-                }
+                udpClient.BeginReceive(OnUdpReceive, null);
+            }
+            catch (SocketException ex)
+            {
+                ClientDisconnected(endPoint);
             }
             catch (ObjectDisposedException ex) { }
         }
@@ -147,6 +144,7 @@ namespace EtherServer.Networking
             {
                 ClientDisconnected(endPoint);
             }
+            catch (ObjectDisposedException ex) { }
         }
 
         void OnUdpSend(IAsyncResult ar)

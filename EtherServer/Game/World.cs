@@ -36,7 +36,7 @@ namespace EtherServer.Game
 
         Dictionary<int, Entity> entities;
 
-        TiledNavMesh navMesh;
+        public TiledNavMesh navMesh;
 
         public Crowd crowd;
 
@@ -54,13 +54,9 @@ namespace EtherServer.Game
 
         public void Init()
         {
+            Console.WriteLine("Boss incoming");
             var boss = new Enemies.TestBoss();
-            Task.Run(() =>
-            {
-                Thread.Sleep(5000);
-                Console.WriteLine("Boss incoming");
-                AddEntity(boss);
-            });
+            AddEntity(boss);
         }
 
         public void Run()
@@ -81,7 +77,7 @@ namespace EtherServer.Game
 
         void Update()
         {
-            crowd.Update(20);
+            crowd.Update(0.02f);
             foreach(var e in entities)
             {
                 e.Value.Update();
@@ -119,9 +115,10 @@ namespace EtherServer.Game
             var id = GenerateId(entityIds);
             entity.id = id;
             entities.Add(id, entity);
+            var gameID = (entity as Enemy).GameID();
             foreach (var p in players)
             {
-                p.Value.SpawnEnemy(id);
+                p.Value.SpawnEnemy(id, gameID);
             }
         }
 
@@ -182,6 +179,21 @@ namespace EtherServer.Game
                 players.Remove(id);
                 Console.WriteLine("Player from {0} disconnected", endPoint);
             }
+        }
+
+        public List<(int id, int gameID, Vector3 position)> GetEnemies()
+        {
+            var list = new List<(int id, int gameID, Vector3 position)>();
+            foreach (var e in entities)
+            {
+                if (e.Value is Enemy)
+                {
+                    var en = e.Value as Enemy;
+                    list.Add((e.Key, en.GameID(), en.Agent.Position));
+                }
+            }
+
+            return list;
         }
 
         void UpdateEnemyPosition(int id, Vector3 position)

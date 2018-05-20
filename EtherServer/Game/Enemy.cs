@@ -1,4 +1,5 @@
-﻿using SharpNav.Crowds;
+﻿using SharpNav;
+using SharpNav.Crowds;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,18 +8,37 @@ namespace EtherServer.Game
 {
     public class Enemy : Entity
     {
+        public virtual int GameID()
+        {
+            return -1;
+        }
         public AgentParams agentParams;
         public int agentID;
+        public Agent Agent
+        {
+            get
+            {
+                return World.Instance.crowd.GetAgent(agentID);
+            }
+        }
         public Enemy()
         {
             agentParams = new AgentParams();
             SetAgentParams();
-            agentID = World.Instance.crowd.AddAgent(new Vector3(3f, -4.72f, 65.35f), agentParams);
+            agentID = World.Instance.crowd.AddAgent(new Vector3(0, -4.72f, 0), agentParams);
         }
-        public virtual void SetAgentParams()
+
+        public virtual void SetAgentParams() { }
+
+        public void SetTargetPosition(Vector3 position)
         {
-            
+            NavMeshQuery q = new NavMeshQuery(World.Instance.navMesh, 2048);
+            var poly = q.FindNearestPoly(position, new Vector3(5, 5, 5));
+            SharpNav.Geometry.Vector3 v = SharpNav.Geometry.Vector3.Zero;
+            q.ClosestPointOnPoly(poly.Polygon, position, ref v);
+            Agent.RequestMoveTarget(poly.Polygon, v);
         }
+
         public override void Update()
         {
             
