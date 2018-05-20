@@ -127,5 +127,28 @@ namespace EtherServer.Game
                 client.SendUnReliable(ms.ToArray());
             }
         }
+
+        public void SpawnEnemy(int id)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            using (BinaryWriter bw = new BinaryWriter(ms))
+            {
+                bw.Write((int)(NetMessage.SpawnEnemy));
+                bw.Write(id);
+                client.SendUnReliable(ms.ToArray());
+            }
+        }
+
+        public void UpdateEnemyPosition(int id, Vector3 position)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            using (BinaryWriter bw = new BinaryWriter(ms))
+            {
+                bw.Write((int)(NetMessage.UpdateEnemyPosition));
+                bw.Write(id);
+                bw.Write(position);
+                client.SendUnReliable(ms.ToArray());
+            }
+        }
     }
 }

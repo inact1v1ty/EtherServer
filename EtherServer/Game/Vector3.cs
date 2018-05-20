@@ -16,5 +16,15 @@ namespace EtherServer.Game
             this.y = y;
             this.z = z;
         }
+
+        public static implicit operator SharpNav.Geometry.Vector3(Vector3 v)
+        {
+            return new SharpNav.Geometry.Vector3(v.x, v.y, v.z);
+        }
+
+        public static implicit operator Vector3(SharpNav.Geometry.Vector3 v)
+        {
+            return new Vector3(v.X, v.Y, v.Z);
+        }
     }
 }
