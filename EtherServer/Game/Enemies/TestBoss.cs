@@ -14,6 +14,10 @@ namespace EtherServer.Game.Enemies
         {
             return 1;
         }
+        public override int DefaultHp()
+        {
+            return 100;
+        }
         public TestBoss()
         {
             agentParams = new SharpNav.Crowds.AgentParams();
@@ -65,6 +69,11 @@ namespace EtherServer.Game.Enemies
             }
             if (minp != -1)
                 targetPlayer = minp;
+        }
+
+        protected override void GiveLoot(ref List<Artifact> artifacts)
+        {
+            artifacts.Add(Artifact.CreateInWorld(0));
         }
     }
 }

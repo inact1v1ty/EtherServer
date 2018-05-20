@@ -109,6 +109,14 @@ namespace EtherServer.Game
                             }
                         }
                         break;
+                    case NetMessage.UseAbility:
+                        {
+                            int type = br.ReadInt32();
+                            Vector3 target = br.ReadVector3();
+                            AbilitiesList.Get(type).Use(id, target);
+                            World.Instance.AbilityUsed(id, type, target);
+                        }
+                        break;
                 }
             }
         }
@@ -173,6 +181,17 @@ namespace EtherServer.Game
             }
         }
 
+        public void EnemyDied(int id)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            using (BinaryWriter bw = new BinaryWriter(ms))
+            {
+                bw.Write((int)(NetMessage.EnemyDied));
+                bw.Write(id);
+                client.SendReliable(ms.ToArray());
+            }
+            }
+
         public void UpdateEnemyPosition(int id, Vector3 position)
         {
             using (MemoryStream ms = new MemoryStream())
@@ -182,6 +201,19 @@ namespace EtherServer.Game
                 bw.Write(id);
                 bw.Write(position);
                 client.SendUnReliable(ms.ToArray());
+            }
+        }
+
+        public void AbilityUsed(int id, int type, Vector3 target)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            using (BinaryWriter bw = new BinaryWriter(ms))
+            {
+                bw.Write((int)(NetMessage.UseAbility));
+                bw.Write(id);
+                bw.Write(type);
+                bw.Write(target);
+                client.SendReliable(ms.ToArray());
             }
         }
     }

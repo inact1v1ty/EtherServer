@@ -34,7 +34,7 @@ namespace EtherServer.Game
 
         Stopwatch stopwatch;
 
-        Dictionary<int, Entity> entities;
+        public Dictionary<int, Entity> entities;
 
         public TiledNavMesh navMesh;
 
@@ -202,6 +202,26 @@ namespace EtherServer.Game
             {
                 p.Value.UpdateEnemyPosition(id, position);
             }
+        }
+
+        public void AbilityUsed(int id, int type, Vector3 target)
+        {
+            foreach (var p in players)
+            {
+                if(p.Key != id)
+                {
+                    p.Value.AbilityUsed(id, type, target);
+                }
+            }
+        }
+
+        public void EnemyDied(int id)
+        {
+            foreach (var p in players)
+            {
+                p.Value.EnemyDied(id);
+            }
+            entities.Remove(id);
         }
 
         int GenerateId(HashSet<int> set)

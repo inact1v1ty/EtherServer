@@ -18,5 +18,15 @@ namespace EtherServer.Game
             this.isReal = isReal;
             this.effects = new Dictionary<string, int>();
         }
+
+        public static Artifact CreateInWorld(int typeId)
+        {
+            return new Artifact(typeId, -1, false);
+        }
+
+        public static Artifact CreateFromBlockchain(int typeId, int uniqueId)
+        {
+            return new Artifact(typeId, uniqueId, true);
+        }
     }
 }

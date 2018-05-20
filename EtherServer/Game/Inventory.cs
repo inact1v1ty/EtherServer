@@ -11,6 +11,13 @@ namespace EtherServer.Game
     public class Inventory{
         public List<Artifact> artifacts;
 
+        public List<Artifact> bag;
+
+        public Inventory()
+        {
+            bag = new List<Artifact>();
+        }
+
         public async Task<int> getInventory(Player player){
             Console.WriteLine("started blockchain connection");
             string playerAddress = player.address;
@@ -31,7 +38,7 @@ namespace EtherServer.Game
                 var artifactOwner = await getArtifactOwner.CallAsync<string>(i);
                 if(artifactOwner == playerAddress){
                     var typeId = await getArtifact.CallAsync<int>(i);
-                    artifacts.Add(new Artifact(typeId, i, true));
+                    artifacts.Add(Artifact.CreateFromBlockchain(typeId, i));
                 }
             }
             Console.WriteLine("inventory loaded");
