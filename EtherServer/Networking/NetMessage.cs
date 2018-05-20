@@ -10,6 +10,8 @@ namespace EtherServer.Networking
         GetPlayers = 2,
         PlayerConnected = 3,
         PlayerDisconnected = 4,
-        UpdatePosition = 5
+        UpdatePosition = 5,
+        SpawnEnemy = 6,
+        UpdateEnemyPosition = 7
     }
 }

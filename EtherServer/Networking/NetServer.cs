@@ -116,21 +116,25 @@ namespace EtherServer.Networking
         {
             IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, port);
 
-            byte[] data = udpClient.EndReceive(ar, ref endPoint);
-
-            if (clients.TryGetValue(endPoint, out NetClient client))
-            {
-                client.ReceivedUdp(data);
-            }
-
             try
             {
-                udpClient.BeginReceive(OnUdpReceive, null);
+                byte[] data = udpClient.EndReceive(ar, ref endPoint);
+
+                if (clients.TryGetValue(endPoint, out NetClient client))
+                {
+                    client.ReceivedUdp(data);
+                }
+                
+                try
+                {
+                    udpClient.BeginReceive(OnUdpReceive, null);
+                }
+                catch (SocketException ex)
+                {
+                    ClientDisconnected(endPoint);
+                }
             }
-            catch (SocketException ex)
-            {
-                ClientDisconnected(endPoint);
-            }
+            catch (ObjectDisposedException ex) { }
         }
 
         public void SendUnReliable(IPEndPoint endPoint, byte[] buffer)

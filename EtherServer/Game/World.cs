@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Text;
-<<<<<<< HEAD
-=======
 using System.Threading;
->>>>>>> f8f03b94ef42117eca5ab373dad7d31342eaa021
 using System.Threading.Tasks;
+using SharpNav;
 using EtherServer.Networking;
+using SharpNav.Geometry;
+using SharpNav.Crowds;
 
 namespace EtherServer.Game
 {
@@ -26,26 +26,41 @@ namespace EtherServer.Game
 
         HashSet<int> usedIds;
 
-        Dictionary<int, Player> players;
+        HashSet<int> entityIds;
+
+        public Dictionary<int, Player> players;
 
         CancellationTokenSource cts;
 
         Stopwatch stopwatch;
 
-        List<Entity> entities;
+        Dictionary<int, Entity> entities;
+
+        TiledNavMesh navMesh;
+
+        public Crowd crowd;
 
         private World()
         {
             players = new Dictionary<int, Player>();
             usedIds = new HashSet<int>();
+            entityIds = new HashSet<int>();
             cts = new CancellationTokenSource();
             stopwatch = new Stopwatch();
-            entities = new List<Entity>();
+            entities = new Dictionary<int, Entity>();
+            navMesh = NavMeshHelper.GetNavMesh() as TiledNavMesh;
+            crowd = new Crowd(256, 1f, ref navMesh);
         }
 
         public void Init()
         {
-            
+            var boss = new Enemies.TestBoss();
+            Task.Run(() =>
+            {
+                Thread.Sleep(5000);
+                Console.WriteLine("Boss incoming");
+                AddEntity(boss);
+            });
         }
 
         public void Run()
@@ -57,7 +72,7 @@ namespace EtherServer.Game
                 stopwatch.Restart();
                 Update();
                 stopwatch.Stop();
-                var delay = TimeSpan.FromMilliseconds(2000) - stopwatch.Elapsed;
+                var delay = TimeSpan.FromMilliseconds(20) - stopwatch.Elapsed;
                 if (delay.Ticks > 0) {
                     Thread.Sleep(delay);
                 }
@@ -66,9 +81,15 @@ namespace EtherServer.Game
 
         void Update()
         {
+            crowd.Update(20);
             foreach(var e in entities)
             {
-                e.Update();
+                e.Value.Update();
+                if (e.Value is Enemy)
+                {
+                    var enemy = e.Value as Enemy;
+                    UpdateEnemyPosition(e.Key, crowd.GetAgent(enemy.agentID).Position);
+                }
             }
         }
 
@@ -77,7 +98,7 @@ namespace EtherServer.Game
             var player = new Player
             {
                 client = client,
-                id = GenerateId()
+                id = GenerateId(usedIds)
             };
             usedIds.Add(player.id);
             players.Add(player.id, player);
@@ -91,6 +112,17 @@ namespace EtherServer.Game
                 }
             }
             Console.WriteLine("Player from {0} connected", client.RemoteEndPoint);
+        }
+
+        public void AddEntity(Entity entity)
+        {
+            var id = GenerateId(entityIds);
+            entity.id = id;
+            entities.Add(id, entity);
+            foreach (var p in players)
+            {
+                p.Value.SpawnEnemy(id);
+            }
         }
 
         public void UpdateNickname(int id, string nickname)
@@ -152,14 +184,22 @@ namespace EtherServer.Game
             }
         }
 
-        int GenerateId()
+        void UpdateEnemyPosition(int id, Vector3 position)
+        {
+            foreach (var p in players)
+            {
+                p.Value.UpdateEnemyPosition(id, position);
+            }
+        }
+
+        int GenerateId(HashSet<int> set)
         {
             var random = new Random();
             int id;
             do
             {
                 id = random.Next();
-            } while (usedIds.Contains(id));
+            } while (set.Contains(id));
             return id;
         }
     }

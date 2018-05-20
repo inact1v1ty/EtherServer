@@ -4,8 +4,9 @@ using System.Text;
 
 namespace EtherServer.Game
 {
-    class Entity
+    public class Entity
     {
+        public int id;
         public virtual void Update()
         {
             Console.WriteLine("Entity");

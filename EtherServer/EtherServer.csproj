@@ -6,4 +6,14 @@
     <StartupObject>EtherServer.Program</StartupObject>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Nethereum.Portable" Version="2.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="SharpNav">
+      <HintPath>..\..\SharpNav\Binaries\SharpNav\Debug\SharpNav.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
